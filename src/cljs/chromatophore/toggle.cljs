@@ -1,14 +1,10 @@
 (ns chromatophore.toggle
   (:require [cljsjs.react.dom]
-            [chromatophore.utils
-             :refer [ratom? boolean?]
-             :refer-macros [defnp fnp]]
+            [chromatophore.utils :refer [ratom?]]
             [reagent.core :as reagent]
-            [reagent.ratom
-             :refer [atom]
-             :refer-macros [run!]]))
+            [reagent.ratom :refer [atom] :refer-macros [run!]]))
 
-(defnp
+(defn
   unfold-reveal
   "`unfold-reveal` is a component with sub components you can toggle the visibility of by clicking a symbol"
   [{:keys [folded-arrow unfolded-arrow unfolded? on-toggle override on-override]
@@ -23,35 +19,40 @@
                        (boolean? @override))))
           "If override is specified, it must be a ratom containing either nil or a boolean")
   (let [unfolded-state (reagent/atom unfolded?)]
-    (fnp unfold-reveal-fnp [parameters main & children]
-         (when (ratom? override)
-           (run! (when (boolean? @override)
-                   (reset! unfolded-state @override)
-                   (if (fn? on-override) (on-override @unfolded-state)))))
+    (fn unfold-reveal-fn
+      ([main] (unfold-reveal-fn {} main))
+      ([parameters main & children]
+       (if-not (map? parameters)
+         (apply unfold-reveal-fn {} parameters main children)
+         (do
+           (when (ratom? override)
+             (run! (when (boolean? @override)
+                     (reset! unfolded-state @override)
+                     (if (fn? on-override) (on-override @unfolded-state)))))
 
-         [:div.unfold-reveal
-          parameters
-          [:span.toggle
-           (merge parameters
-                  {:class    (str "unselectable "
-                                  (when (empty? children)
-                                    " deactivated"))
-                   :on-click #(do (swap! unfolded-state not)
-                                  (if (fn? on-toggle)
-                                    (on-toggle % @unfolded-state)))})
-           (if (and @unfolded-state
-                    (not (empty? children)))
-             unfolded-arrow
-             folded-arrow)]
-          [:div.content parameters
-           [:div.main parameters main]
-           [:div.children
-            (merge parameters
-                   (if-not @unfolded-state {:style {:display "none"}}))
-            ;; TODO: better to use a child-idx function than this
-            (map-indexed
-              (fn [idx child] ^{:key idx} [:div.child parameters child])
-              children)]]])))
+           [:div.unfold-reveal
+            parameters
+            [:span.toggle
+             (merge parameters
+                    {:class    (str "unselectable "
+                                    (when (empty? children)
+                                      " deactivated"))
+                     :on-click #(do (swap! unfolded-state not)
+                                    (if (fn? on-toggle)
+                                      (on-toggle % @unfolded-state)))})
+             (if (and @unfolded-state
+                      (not (empty? children)))
+               unfolded-arrow
+               folded-arrow)]
+            [:div.content parameters
+             [:div.main parameters main]
+             [:div.children
+              (merge parameters
+                     (if-not @unfolded-state {:style {:display "none"}}))
+              ;; TODO: better to use a child-idx function than this
+              (map-indexed
+               (fn [idx child] ^{:key idx} [:div.child parameters child])
+               children)]]]))))))
 
 (defn toggle-tree
   "A component for displaying a hierarchical tree of elements using `unfold-reveal` components"
@@ -89,7 +90,7 @@
                                   (when (fn? on-toggle)
                                     (on-toggle %1 %2)))
                child-parameters (assoc parameters
-                                  :override override)
+                                       :override override)
                main-parameters (merge argument
                                       parameters
                                       {:on-toggle   new-on-toggle

@@ -7,33 +7,9 @@
               [reagent.core :as reagent]
               [reagent.ratom :refer-macros [reaction]]])
    #?(:clj [clojure.test :refer [deftest testing is are run-tests use-fixtures]])
-   [schema.core :as schema]
-   [schema.test]
    [chromatophore.utils
-    :refer [atom? boolean? #?@(:clj [fnp defnp])]
+    :refer [atom? #?@(:clj [fnp defnp])]
     #?@(:cljs [:refer-macros [fnp defnp]])]))
-
-(deftest boolean?-basic-test
-  (testing "The boolean? predicate handles booleans properly"
-    (is (= (boolean? true) true))
-    (is (= (boolean? false) true))))
-
-(deftest boolean?-sad-paths
-  (testing "The boolean? predicate isn't true of strings, numbers, etc"
-    (are [x] (= (boolean? x) false)
-      "Hello"
-      1
-      2.0
-      #(+ 1 %)
-      #"regex"
-      #?(:cljs (js/Object.))
-      nil
-      :foo
-      {:foo :bar}
-      #{1 2 3}
-      [1 2 3]
-      (atom {})
-      #?(:cljs (reagent/atom {})))))
 
 (deftest atom?-basic-test
   (testing "The atom? predicate handles ordinary atoms properly"
@@ -101,15 +77,6 @@
   ([_ x] :bar)
   ([_ x y] :baz))
 
-(use-fixtures :once schema.test/validate-schemas)
-
-(defnp ^:private test-defnp5
-  "test function number 5"
-  ([_ x :- schema/Bool] (not x))
-  ([_
-    x :- schema/Bool
-    y :- schema/Int] (inc y)))
-
 (deftest defnp-tests
   (testing "defnp can make a basic function number 1"
     (is (= 123 (test-defnp1 123))))
@@ -120,12 +87,6 @@
   (testing "defnp can handle a docstring and multiple dispatch (test function number 3)"
     (is (= 123 (test-defnp3 123)))
     (is (= 123 (test-defnp3 :bar 123)))
-    (is (= "test function number 3" (-> #'test-defnp3 meta :doc))))
-  (testing "defnp can handle a :^private meta-data declaration"
-    (is (= false (test-defnp5 true)))
-    (is (= 1 (test-defnp5 true 0)))
-    (is (= true (-> #'test-defnp5 meta :private)))
-    (is (= "test function number 5"
-           (-> #'test-defnp5 meta :doc)))))
+    (is (= "test function number 3" (-> #'test-defnp3 meta :doc)))))
 
 (comment (run-tests))

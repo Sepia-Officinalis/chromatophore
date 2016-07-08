@@ -1,7 +1,5 @@
 (ns chromatophore.utils
-  #?(:clj  (:require [schema.core :as schema]))
   #?(:cljs (:require [reagent.ratom :refer [IReactiveAtom]]))
-  #?(:cljs (:require-macros [schema.core :as schema]))
   #?(:clj  (:import clojure.lang.IDeref)))
 
 (defn atom?
@@ -21,22 +19,13 @@
      [a]
      (satisfies? IReactiveAtom a)))
 
-(defn boolean?
-  "Predicate identifying if an object is a boolean"
-  [x]
-  #?(:cljs ((js* "function(x){ return typeof(x) === \"boolean\"; }") x))
-  #?(:clj (= (class x) java.lang.Boolean)))
-
 (defmacro fnp
   "A macro for defining functions that take an optional first argument that is a map of parameters"
   [& body]
   (let [[fn-name & fn-body] (if (symbol? (first body))
                               body
-                              (cons (gensym "fnp") body))
-        fn                  (if-not (->> body flatten (some #(= :- %)))
-                              'fn
-                              'schema/fn)]
-    `(let [fnp# (~fn ~@body)]
+                              (cons (gensym "fnp") body))]
+    `(let [fnp# (fn ~@body)]
        (fn ~fn-name
          [& args#]
          (if (not (map? (first args#)))
