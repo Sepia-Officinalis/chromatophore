@@ -1,3 +1,20 @@
+(def osx? (= (System/getProperty "os.name") "Mac OS X"))
+(def npm-packages
+  (let [pkgs ['slimerjs "0.906.2"
+              'phantomjs-prebuilt "2.1.7"
+              'karma-cljs-test "0.1.0"
+              'karma-firefox-launcher "0.1.7"
+              'karma-chrome-launcher "0.2.2"
+              'karma "0.13.22"]]
+    (if osx?
+      (conj pkgs 'karma-safari-launcher "1.0.0")
+      pkgs)))
+
+(def browsers
+  (if osx?
+    [:chrome :firefox :safari]
+    [:chrome :firefox]))
+
 (defproject chromatophore "0.1.10"
   :description "CuttleFi.sh Reusable Components for Reagent"
 
@@ -12,7 +29,6 @@
                  [markdown-clj              "0.9.89"]
                  [org.clojure/clojure       "1.9.0-alpha10"]
                  [org.clojure/clojurescript "1.9.93"]
-                 [prismatic/schema          "1.1.3"]
                  [reagent                   "0.6.0-rc"
                   :exclusions [cljsjs/react
                                cljsjs/react-dom
@@ -53,17 +69,12 @@
                                     :pretty-print? true}}]}
 
   ;; Use NPM to get slimerjs and phantomjs
-  :npm            {:dependencies [[slimerjs "0.906.2"
-                                   phantomjs-prebuilt "2.1.7"
-                                   karma-cljs-test "0.1.0"
-                                   karma-firefox-launcher "0.1.7"
-                                   karma-chrome-launcher "0.2.2"
-                                   karma "0.13.22"]]}
+  :npm            {:dependencies [~npm-packages]}
 
   :doo            {:paths {:slimer    "./node_modules/.bin/slimerjs"
                            :phantomjs "./node_modules/.bin/phantomjs"
                            :karma     "./node_modules/.bin/karma"}
-                   :alias {:browsers [:chrome :firefox]
+                   :alias {:browsers ~browsers
                            :all      [:browsers :headless]}}
 
   :cljsbuild     {:builds [{:id           "devcards"
