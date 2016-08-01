@@ -4,15 +4,15 @@
   :source-paths ["src/clj" "src/cljc" "src/cljs"]
   :test-paths ["test/cljc" "test/cljs"]
 
-  :dependencies [[cljsjs/react              "15.0.2-0"]
-                 [cljsjs/react-dom          "15.0.2-0"]
-                 [cljsjs/react-dom-server   "15.0.2-0"]
+  :dependencies [[cljsjs/react              "15.3.0-0"]
+                 [cljsjs/react-dom          "15.3.0-0"]
+                 [cljsjs/react-dom-server   "15.3.0-0"]
                  [garden                    "1.3.2"]
                  [hiccup                    "1.0.5"]
-                 [markdown-clj              "0.9.88"]
-                 [org.clojure/clojure       "1.9.0-alpha7"]
+                 [markdown-clj              "0.9.89"]
+                 [org.clojure/clojure       "1.9.0-alpha10"]
                  [org.clojure/clojurescript "1.9.93"]
-                 [prismatic/schema          "1.1.0"]
+                 [prismatic/schema          "1.1.3"]
                  [reagent                   "0.6.0-rc"
                   :exclusions [cljsjs/react
                                cljsjs/react-dom
@@ -33,7 +33,7 @@
                      [lein-npm "0.6.2"]
                      [lein-figwheel "0.5.2"]
                      [lein-garden "0.2.6"]
-                     [lein-doo "0.1.6"]
+                     [lein-doo "0.1.7"]
                      [lein-pdo "0.1.1"]
                      [lein-shell "0.5.0"]]
 
