@@ -67,6 +67,7 @@
                    :alias {:browsers ~(if (= (System/getProperty "os.name") "Mac OS X")
                                         [:chrome :firefox :safari]
                                         [:chrome :firefox])
+                           :headless [:slimer :phantom :nashorn]
                            :all      [:browsers :headless]}}
 
   :cljsbuild     {:builds [{:id           "devcards"
@@ -82,7 +83,7 @@
                             :source-paths ["src/cljs" "src/cljc" "test/cljc" "test/cljs"]
                             :compiler     {:output-to     "target/js/compiled/testable.js"
                                            :main          "chromatophore.doo.runner"
-                                           :optimizations :none}}
+                                           :optimizations :whitespace}}
 
                            {:id           "test-advanced"
                             :source-paths ["src/cljs" "src/cljc" "test/cljs" "test/cljc"]
