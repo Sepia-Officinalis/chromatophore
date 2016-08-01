@@ -51,15 +51,13 @@
                                     :pretty-print? true}}]}
 
   ;; Use NPM to get slimerjs and phantomjs
-  :npm            {:dependencies [~(let [pkgs ['slimerjs "0.906.2"
-                                               'phantomjs-prebuilt "2.1.9"
-                                               'karma-cljs-test "0.1.0"
-                                               'karma-firefox-launcher "0.1.7"
-                                               'karma-chrome-launcher "0.2.2"
-                                               'karma "0.13.22"]]
-                                     (if (= (System/getProperty "os.name") "Mac OS X")
-                                       (conj pkgs 'karma-safari-launcher "1.0.0")
-                                       pkgs))]}
+  :npm            {:dependencies [[slimerjs "0.906.2"
+                                   phantomjs-prebuilt "2.1.9"
+                                   karma-cljs-test "0.1.0"
+                                   karma-firefox-launcher "0.1.7"
+                                   karma-chrome-launcher "0.2.2"
+                                   karma "0.13.22"
+                                   karma-safari-launcher "1.0.0"]]}
 
   :doo            {:paths {:slimer    "./node_modules/.bin/slimerjs"
                            :phantomjs "./node_modules/.bin/phantomjs"
