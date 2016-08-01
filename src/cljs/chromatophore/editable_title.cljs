@@ -1,6 +1,6 @@
 (ns chromatophore.editable-title
   (:require [cljsjs.react.dom]
-            [chromatophore.utils :refer [deref? ratom?]]
+            [chromatophore.utilities :refer [deref? ratom?]]
             [reagent.ratom
              :refer-macros [run!]
              :refer [atom]])

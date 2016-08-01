@@ -1,9 +1,11 @@
 (ns chromatophore.toggle
   (:require [cljsjs.react.dom]
-            [chromatophore.utils :refer [ratom?]]
+            [chromatophore.utilities :refer [ratom?]]
             [reagent.core :as reagent]
             [reagent.ratom :refer [atom] :refer-macros [run!]]))
 
+;; TODO: Make a spec for this
+;; TODO: Make this statically render
 (defn
   unfold-reveal
   "`unfold-reveal` is a component with sub components you can toggle the visibility of by clicking a symbol"
