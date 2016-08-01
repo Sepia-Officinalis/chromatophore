@@ -1,20 +1,3 @@
-(def osx? (= (System/getProperty "os.name") "Mac OS X"))
-(def npm-packages
-  (let [pkgs ['slimerjs "0.906.2"
-              'phantomjs-prebuilt "2.1.7"
-              'karma-cljs-test "0.1.0"
-              'karma-firefox-launcher "0.1.7"
-              'karma-chrome-launcher "0.2.2"
-              'karma "0.13.22"]]
-    (if osx?
-      (conj pkgs 'karma-safari-launcher "1.0.0")
-      pkgs)))
-
-(def browsers
-  (if osx?
-    [:chrome :firefox :safari]
-    [:chrome :firefox]))
-
 (defproject chromatophore "0.1.10"
   :description "CuttleFi.sh Reusable Components for Reagent"
 
@@ -41,13 +24,12 @@
 
   :profiles
   {:dev
-   {:plugins        [[com.jakemccrary/lein-test-refresh "0.12.0"]
-                     [lein-cljsbuild "1.1.2"
+   {:plugins        [[lein-cljsbuild "1.1.3"
                       :exclusions
                       [[org.apache.commons/commons-compress]
                        [org.clojure/clojure]]]
                      [lein-npm "0.6.2"]
-                     [lein-figwheel "0.5.2"]
+                     [lein-figwheel "0.5.4-7"]
                      [lein-garden "0.2.6"]
                      [lein-doo "0.1.7"]
                      [lein-pdo "0.1.1"]
@@ -58,7 +40,7 @@
     :dependencies   [[devcards "0.2.1-7"
                       :exclusions [cljs/react]]
                      [org.apache.commons/commons-compress "1.12"]
-                     [doo "0.1.6"]
+                     [doo "0.1.7"]
                      [javax.servlet/servlet-api "2.5"]]}}
 
   :garden         {:builds
@@ -69,12 +51,22 @@
                                     :pretty-print? true}}]}
 
   ;; Use NPM to get slimerjs and phantomjs
-  :npm            {:dependencies [~npm-packages]}
+  :npm            {:dependencies [~(let [pkgs ['slimerjs "0.906.2"
+                                               'phantomjs-prebuilt "2.1.7"
+                                               'karma-cljs-test "0.1.0"
+                                               'karma-firefox-launcher "0.1.7"
+                                               'karma-chrome-launcher "0.2.2"
+                                               'karma "0.13.22"]]
+                                     (if (= (System/getProperty "os.name") "Mac OS X")
+                                       (conj pkgs 'karma-safari-launcher "1.0.0")
+                                       pkgs))]}
 
   :doo            {:paths {:slimer    "./node_modules/.bin/slimerjs"
                            :phantomjs "./node_modules/.bin/phantomjs"
                            :karma     "./node_modules/.bin/karma"}
-                   :alias {:browsers ~browsers
+                   :alias {:browsers ~(if (= (System/getProperty "os.name") "Mac OS X")
+                                        [:chrome :firefox :safari]
+                                        [:chrome :firefox])
                            :all      [:browsers :headless]}}
 
   :cljsbuild     {:builds [{:id           "devcards"
@@ -102,7 +94,6 @@
   :figwheel      {:css-dirs ["resources/public/css"]}
   :aliases       {"garden-and-devcards" ["pdo"
                                          "garden" "auto,"
-                                         "test-refresh,"
                                          "figwheel,"]
                   "devcards"            ["do"
                                          "clean,"
@@ -112,8 +103,7 @@
                   "test-auto"           ["do"
                                          "clean,"
                                          "npm" "install,"
-                                         "doo" "phantom" "test" "auto,"]
-                  "auto-test"           ["test-auto"]
+                                         "doo" "slimer" "test" "auto,"]
                   "test-advanced"       ["do"
                                          "clean,"
                                          "npm" "install,"
@@ -121,7 +111,6 @@
                                          "test,"
                                          "doo" "all" "test" "once,"
                                          "doo" "all" "test-advanced" "once,"]
-                  "advanced-test"       ["test-advanced"]
                   "deep-clean"          ["do"
                                          "shell" "rm" "-rf" "figwheel_server.log" "node_modules,"
                                          "clean"]})
