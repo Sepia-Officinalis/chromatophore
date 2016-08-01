@@ -52,7 +52,7 @@
 
   ;; Use NPM to get slimerjs and phantomjs
   :npm            {:dependencies [~(let [pkgs ['slimerjs "0.906.2"
-                                               'phantomjs-prebuilt "2.1.7"
+                                               'phantomjs-prebuilt "2.1.9"
                                                'karma-cljs-test "0.1.0"
                                                'karma-firefox-launcher "0.1.7"
                                                'karma-chrome-launcher "0.2.2"
